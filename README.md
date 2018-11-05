@@ -210,7 +210,7 @@ Request body:
 | `customer_id` | integer  | ID of the customer checking in this film
 | `movie_id`    | integer | ID of the movie to be checked in
 
-## Optional Enhancements
+<!--- ## Optional Enhancements
 These really are **optional** - if you've gotten here and you have time left, that means you're moving speedy fast!
 
 ### Query Parameters
@@ -300,8 +300,7 @@ URI parameters:
 Fields to return:
 - `title`
 - `checkout_date`
-- `due_date`
-
+- `due_date` --->
 
 ## Reference
 - [Postman on Environments](https://www.getpostman.com/docs/environments)
