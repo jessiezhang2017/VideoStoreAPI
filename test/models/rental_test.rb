@@ -1,9 +1,18 @@
 require "test_helper"
 
 describe Rental do
-  let(:rental) { Rental.new }
+  describe "relations" do
+    it "belongs to a customer" do
+      rental = rentals(:one)
+      rental.must_respond_to :customer
+      rental.customer.must_be_kind_of Customer
+    end
 
-  it "must be valid" do
-    value(rental).must_be :valid?
+    it "belongs to a movie" do
+      rental = rentals(:one)
+      rental.must_respond_to :movie
+      rental.movie.must_be_kind_of Movie
+    end
   end
+
 end
