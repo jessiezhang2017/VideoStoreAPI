@@ -43,6 +43,7 @@ available_inventory (not currently checked-out to a customer)
 This will be the same as inventory unless you've completed the optional endpoints.
 
 ----------------------
+post "/movies", to: "movies#create", as: "create_movie"
 
 POST /movies
 Create a new movie in the video store inventory.
@@ -58,6 +59,7 @@ release_date	   string         YYYY-MM-DD	Date the movie was released
 inventory	         integer	      Quantity available in the video store
 
 ---------------------------
+post "/rentals/check-out", to: "rentals#check_out", as: "check_out_movie"
 
 POST /rentals/check-out
 Check out one of the movie's inventory to the customer. The rental's check-out date should be set to today, and the due date should be set to a week from today.
@@ -71,6 +73,7 @@ customer_id	     integer	      ID of the customer checking out this film
 movie_id	         integer	      ID of the movie to be checked out
 
 ---------------------------
+post "/rentals/check-in, to: "rentals#check_in", as: "check_in_movie"
 
 POST /rentals/check-in
 Check in one of a customer's rentals
