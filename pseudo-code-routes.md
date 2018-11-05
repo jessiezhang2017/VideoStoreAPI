@@ -3,6 +3,9 @@ The endpoints your API will need
 The HTTP verbs each endpoint will use
 Any data that must be provided to the endpoint in order for it to do its work -->
 
+get "/customers", to: "customers#index", as: "customers"
+
+
 GET /customers
 List all customers
 
@@ -16,6 +19,8 @@ movies_checked_out_count
 This will be 0 unless you've completed optional requirements
 
 ----------------------------
+get "/movies", to: "movies#index", as: "movies"
+
 GET /movies
 List all movies
 
@@ -26,6 +31,7 @@ title
 release_date
 
 ------------------------------
+get "/movies/:id", to: "movies#show", as: "movie"
 
 GET /movies/:id
 Look a movie up by id
