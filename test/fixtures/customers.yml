@@ -8,7 +8,7 @@ mike:
   state: WA
   postal_code: 98003
   phone: 206-222-1999
-  movies_checked_out_count: 1
+  movies_checked_out_count: 2
 
 lily:
   name: Lily

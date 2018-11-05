@@ -12,3 +12,9 @@ ring:
   overview: thrill
   release_date: 2018-11-05
   inventory: 1
+
+titanic:
+  title: Titanic
+  overview: masterpiece
+  release_date: 1997-11-05
+  inventory: 5
