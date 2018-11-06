@@ -81,7 +81,7 @@ describe MoviesController do
     end
 
     it "returns moviess with exactly the required fields" do
-      keys = %w(id title release_date)
+      fields = %w(id release_date title)
 
       # Act
       get movies_path
@@ -91,21 +91,40 @@ describe MoviesController do
 
       # Assert that each
       body.each do |movie|
-        expect(movie.keys).must_equal keys
-        expect(movie.keys.length).must_equal keys.length
+        expect(movie.keys.sort).must_equal fields
+        expect(movie.keys.length).must_equal fields.length
       end
     end
   end
 
+describe "show" do
+  it "is a real working route and returns JSON" do
+    # Act
+    get movie_path(movies(:taken).id)
+
+    # Assert
+    expect(response.header['Content-Type']).must_include 'json'
+    must_respond_with :success
+  end
+
+
   it "can get a movie" do
       get movie_path(movies(:taken).id)
       must_respond_with :success
-    end
+  end
 
-    it "responds with a 404 message if no movie is found" do
+  it "responds with a 404 message if no movie is found" do
       id = -1
       get movie_path(id)
       must_respond_with :not_found
-    end
+  end
 
+  it "reurns movie with the require fields" do
+    get movie_path(movies(:taken).id)
+    body = JSON.parse(response.body)
+
+    fields = %w(id inventory overview release_date title)
+    expect(body["movie"].keys.sort).must_equal fields
+  end
+ end
 end

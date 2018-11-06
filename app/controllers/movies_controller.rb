@@ -15,7 +15,7 @@ class MoviesController < ApplicationController
     else
       render json: {
         ok: true,
-        pet: movie.as_json(except: [:created_at, :updated_at])
+        movie: movie.as_json(except: [:created_at, :updated_at])
       }, status: :ok
     end
   end
