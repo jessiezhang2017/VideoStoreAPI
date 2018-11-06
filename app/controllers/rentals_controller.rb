@@ -20,5 +20,4 @@ class RentalsController < ApplicationController
   end
 
 
-
 end
