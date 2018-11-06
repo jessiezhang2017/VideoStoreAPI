@@ -10,7 +10,7 @@ class RentalsController < ApplicationController
 
     rental.due_date = rental.check_out_date + 7
     rental.customer.movies_checked_out_count += 1
-    rental.movie.inventory -= 1
+    rental.movie.available_inventory -= 1
 
     if rental.save
       render json: { id: rental.id , checkout_date: rental.check_out_date, due_date:rental.due_date}, status:  :ok
@@ -42,8 +42,8 @@ class RentalsController < ApplicationController
       current_rental.update(status: "returned")
       checked_out_count = customer.movies_checked_out_count - 1
       customer.update(movies_checked_out_count: checked_out_count)
-      updated_inventory = movie.inventory + 1
-      movie.update(inventory: updated_inventory)
+      updated_available_inventory = movie.available_inventory + 1
+      movie.update(available_inventory: updated_available_inventory)
     end
 
   end
@@ -59,5 +59,5 @@ class RentalsController < ApplicationController
       render json: {ok: false, message: "The #{name} for this rental was not found"}, status: :not_found
     end
   end
-  
+
 end

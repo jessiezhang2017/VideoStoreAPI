@@ -8,7 +8,8 @@ describe MoviesController do
         title: "Jack",
         overview: "American comedy-drama film starring Robin Williams and directed by Francis Ford Coppola.",
         release_date: "1996-08-09",
-        inventory: 1
+        inventory: 1,
+        available_inventory: 1
       }
     }
 
@@ -32,6 +33,7 @@ describe MoviesController do
       expect(movie.title).must_equal movie_data[:title]
       expect(movie.overview).must_equal movie_data[:overview]
       expect(movie.inventory).must_equal movie_data[:inventory]
+      expect(movie.available_inventory).must_equal movie_data[:available_inventory]
 
       must_respond_with :success
     end
@@ -127,7 +129,7 @@ describe "show" do
     get movie_path(movies(:taken).id)
     body = JSON.parse(response.body)
 
-    fields = %w(id inventory overview release_date title)
+    fields = %w(available_inventory id inventory overview release_date title)
     expect(body.keys.sort).must_equal fields
   end
  end
