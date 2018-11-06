@@ -41,5 +41,34 @@ describe Movie do
       result = movie.save
       result.must_equal true
     end
-  end 
+
+    it "must have an available inventory" do
+      movie = movies(:taken)
+
+      movie.available_inventory = nil
+      result = movie.save
+      result.must_equal false
+
+      movie.available_inventory = 1
+      result = movie.save
+      result.must_equal true
+    end
+
+    it "must have 0 or more inventory" do
+      movie = movies(:taken)
+
+      movie.available_inventory =  -1
+      result = movie.save
+      result.must_equal false
+
+      movie.available_inventory = 0
+      result = movie.save
+      result.must_equal true
+
+      movie.available_inventory = 1
+      result = movie.save
+      result.must_equal true
+    end
+
+  end
 end
