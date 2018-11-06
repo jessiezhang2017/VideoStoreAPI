@@ -1,9 +1,45 @@
 require "test_helper"
 
 describe Movie do
-  let(:movie) { Movie.new }
+  describe "validations" do
+    it "must have a title" do
+      movie = movies(:taken)
 
-  it "must be valid" do
-    value(movie).must_be :valid?
-  end
+      movie.title = nil
+      result = movie.save
+      result.must_equal false
+
+      movie.title = "Jane"
+      result = movie.save
+      result.must_equal true
+    end
+
+    it "must have inventory" do
+      movie = movies(:taken)
+
+      movie.inventory = nil
+      result = movie.save
+      result.must_equal false
+
+      movie.inventory = 1
+      result = movie.save
+      result.must_equal true
+    end
+
+    it "must have 0 or more inventory" do
+      movie = movies(:taken)
+
+      movie.inventory =  -1
+      result = movie.save
+      result.must_equal false
+
+      movie.inventory = 0
+      result = movie.save
+      result.must_equal true
+
+      movie.inventory = 1
+      result = movie.save
+      result.must_equal true
+    end
+  end 
 end
