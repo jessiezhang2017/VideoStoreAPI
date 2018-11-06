@@ -7,6 +7,19 @@ class MoviesController < ApplicationController
     render json: movies.as_json( only: [:id, :title, :release_date]), status: :ok
   end
 
+  def show
+    movie = Movie.find_by(id: params[:id])
+
+    if movie.nil?
+       render json: {ok: false, message: 'not found'}, status: :not_found
+    else
+      render json: {
+        ok: true,
+        pet: movie.as_json(except: [:created_at, :updated_at])
+      }, status: :ok
+    end
+  end
+
   def zomg
     render json:{ ok: true, message: 'it works!'}, status: :ok
   end
@@ -22,7 +35,7 @@ class MoviesController < ApplicationController
   end
 
   private
-  
+
   def movie_params
     params.require(:movie).permit(:title, :overview, :release_date, :inventory)
   end

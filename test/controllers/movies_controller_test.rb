@@ -47,7 +47,7 @@ describe MoviesController do
     end
 
   end
-  
+
   describe "index" do
     it "is a real working route and returns JSON" do
       # Act
@@ -96,4 +96,16 @@ describe MoviesController do
       end
     end
   end
+
+  it "can get a movie" do
+      get movie_path(movies(:taken).id)
+      must_respond_with :success
+    end
+
+    it "responds with a 404 message if no movie is found" do
+      id = -1
+      get movie_path(id)
+      must_respond_with :not_found
+    end
+
 end
