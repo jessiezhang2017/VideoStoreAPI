@@ -1,4 +1,5 @@
 require "test_helper"
+require 'pry'
 describe MoviesController do
 
   describe "create" do
@@ -18,18 +19,21 @@ describe MoviesController do
 
     it "creates a movie with valid data and returns it's ID" do
       expect {
-        post create_movie_path, params: { movie: movie_data }
+        post create_movie_path, params: movie_data
       }.must_change "Movie.count", 1
 
       body = JSON.parse(response.body)
       expect(body).must_be_kind_of Hash
-      expect(body["movie"]).must_include "id"
 
-      movie = Movie.find(body["movie"]["id"].to_i)
+      expect(body).must_include "id"
+
+      movie = Movie.find(body["id"])
 
       expect(movie.title).must_equal movie_data[:title]
-      must_respond_with :success
+      expect(movie.overview).must_equal movie_data[:overview]
+      expect(movie.inventory).must_equal movie_data[:inventory]
 
+      must_respond_with :success
     end
 
     it "fails to create a movie and returns an error with invalid data" do
@@ -124,7 +128,7 @@ describe "show" do
     body = JSON.parse(response.body)
 
     fields = %w(id inventory overview release_date title)
-    expect(body["movie"].keys.sort).must_equal fields
+    expect(body.keys.sort).must_equal fields
   end
  end
 end

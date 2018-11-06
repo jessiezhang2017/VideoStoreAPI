@@ -13,10 +13,7 @@ class MoviesController < ApplicationController
     if movie.nil?
        render json: {ok: false, message: 'not found'}, status: :not_found
     else
-      render json: {
-        ok: true,
-        movie: movie.as_json(except: [:created_at, :updated_at])
-      }, status: :ok
+      render json: movie.as_json(except: [:created_at, :updated_at]), status: :ok
     end
   end
 
