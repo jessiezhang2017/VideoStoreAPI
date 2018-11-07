@@ -1,3 +1,4 @@
+require "pry"
 class MoviesController < ApplicationController
   before_action :find_movie, only: [:show, :current, :history]
 
@@ -21,7 +22,7 @@ class MoviesController < ApplicationController
     # if movie.nil?
     #    render json: {ok: false, message: 'not found'}, status: :not_found
     # else
-      render json: movie.as_json(except: [:created_at, :updated_at]), status: :ok
+      render json: @movie.as_json(except: [:created_at, :updated_at]), status: :ok
     # end
   end
 
@@ -42,9 +43,19 @@ class MoviesController < ApplicationController
 
 
   def current
+# List customers that have currently checked out a copy of the film
 
-    current_customers = movie.customers
+    current_rentals = @movie.rentals.where("status = 'checked out'")
 
+    # binding.pry
+    current_customers = []
+    current_rentals.each do |rental|
+
+      current_customers << rental.customer
+    end
+
+    render :json => current_customers, :include => {current_rentals => {:only => :check_out_date}},:except => [:created_at, :updated_at] #works
+    # render :json => current_customers, :except => [:created_at, :updated_at] #works
 
   end
 
@@ -57,8 +68,8 @@ class MoviesController < ApplicationController
   private
 
   def find_movie
-    movie = Movie.find(id: params[:id])
-    if movie.nil?
+    @movie = Movie.find(params[:id].to_i)
+    if @movie.nil?
       render json: {ok: false, message: 'not found'}, status: :not_found
     end
   end
