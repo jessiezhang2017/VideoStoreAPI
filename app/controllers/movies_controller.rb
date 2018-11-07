@@ -1,4 +1,5 @@
 class MoviesController < ApplicationController
+  before_action :find_movie, only: [:show, :current, :history]
 
   def index
     if Movie.sort?(movie_params["sort"])
@@ -15,13 +16,13 @@ class MoviesController < ApplicationController
   end
 
   def show
-    movie = Movie.find_by(id: params[:id])
-
-    if movie.nil?
-       render json: {ok: false, message: 'not found'}, status: :not_found
-    else
+    # movie = Movie.find_by(id: params[:id])
+    #
+    # if movie.nil?
+    #    render json: {ok: false, message: 'not found'}, status: :not_found
+    # else
       render json: movie.as_json(except: [:created_at, :updated_at]), status: :ok
-    end
+    # end
   end
 
   def zomg
@@ -39,7 +40,28 @@ class MoviesController < ApplicationController
     end
   end
 
+
+  def current
+
+    current_customers = movie.customers
+
+
+  end
+
+  def history
+
+
+
+  end
+
   private
+
+  def find_movie
+    movie = Movie.find(id: params[:id])
+    if movie.nil?
+      render json: {ok: false, message: 'not found'}, status: :not_found
+    end
+  end
 
   def paginate_check
     if movie_params["p"] && movie_params["n"]
