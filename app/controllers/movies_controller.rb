@@ -1,10 +1,17 @@
 class MoviesController < ApplicationController
 
   def index
-    # will not have a view to use instance vaiable @pets, so new just use pets
-    movies = Movie.all
+    if sort?
+      movies = paginate_check.order(movie_params["sort"])
+    else
+      movies = paginate_check
+    end
 
-    render json: movies.as_json( only: [:id, :title, :release_date]), status: :ok
+    if movies
+       render json: movies.as_json( only: [:id, :title, :release_date]), status: :ok
+    else
+       render json: {ok: false, message: 'not found'}, status: :not_found
+    end
   end
 
   def show
@@ -34,8 +41,26 @@ class MoviesController < ApplicationController
 
   private
 
-  def movie_params
-    params.permit(:title, :overview, :release_date, :inventory)
+  def paginate_check
+    if movie_params["p"] && movie_params["n"]
+      return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
+    else
+      return Movie.all
+    end
   end
+
+  def sort?
+    valid_fields = ["title" ,"release_date"]
+    if valid_fields.include? (movie_params["sort"])
+      return true
+    else
+      return false
+    end
+  end
+
+  def movie_params
+    params.permit(:title, :overview, :release_date, :inventory, :sort, :n, :p)
+  end
+
 
 end
