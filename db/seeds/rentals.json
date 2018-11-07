@@ -1,0 +1,38 @@
+[
+{
+"check_out_date": "Tue, 28 Apr 2015 07:54:14 -0700",
+"due_date": "Wed, 29 Apr 2015 07:54:14 -0700",
+"customer_id": 0,
+"movie_id": 0
+},
+{
+"check_out_date": "Tue, 28 Apr 2015 07:54:14 -0700",
+"due_date": "Wed, 29 Apr 2015 07:54:14 -0700",
+"customer_id": 0,
+"movie_id": 0
+},
+{
+"check_out_date": "Tue, 28 Apr 2015 07:54:14 -0700",
+"due_date": "Wed, 29 Apr 2015 07:54:14 -0700",
+"customer_id": 0,
+"movie_id": 0
+},
+{
+"check_out_date": "Tue, 28 Apr 2015 07:54:14 -0700",
+"due_date": "Wed, 29 Apr 2015 07:54:14 -0700",
+"customer_id": 0,
+"movie_id": 0
+},
+{
+"check_out_date": "Tue, 28 Apr 2015 07:54:14 -0700",
+"due_date": "Thu, 06 Dec 2018 15:54:48 -0800",
+"customer_id": 0,
+"movie_id": 0
+},
+{
+"check_out_date": "Tue, 06 Nov 2018 07:54:14 -0700",
+"due_date": "Thu, 06 Dec 2018 15:54:48 -0800",
+"customer_id": 0,
+"movie_id": 0
+}
+]
