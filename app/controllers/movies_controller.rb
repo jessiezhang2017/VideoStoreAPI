@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
 
   def index
-    if sort?
+    if Movie.sort?(movie_params["sort"])
       movies = paginate_check.order(movie_params["sort"])
     else
       movies = paginate_check
@@ -46,15 +46,6 @@ class MoviesController < ApplicationController
       return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
     else
       return Movie.all
-    end
-  end
-
-  def sort?
-    valid_fields = ["title" ,"release_date"]
-    if valid_fields.include? (movie_params["sort"])
-      return true
-    else
-      return false
     end
   end
 
