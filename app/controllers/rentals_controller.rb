@@ -1,7 +1,9 @@
+require "pry"
+
 class RentalsController < ApplicationController
 
   def check_out
-    rental = Rental.check_out(params[:customer_id], params[:movie_id])
+    rental = Rental.check_out(rental_params[:customer_id], rental_params[:movie_id])
 
     if rental.save
       rental.movie.check_out
@@ -14,7 +16,7 @@ class RentalsController < ApplicationController
   end
 
   def check_in
-    current_rental = Rental.find_by(movie_id: params[:movie_id], customer_id: params[:customer_id], status: "checked out")
+    current_rental = Rental.find_by(movie_id: rental_params[:movie_id], customer_id: rental_params[:customer_id], status: "checked out")
 
     if current_rental.nil?
       render json: {ok: false, message: "Your rental was not found"}, status: :not_found
@@ -25,38 +27,52 @@ class RentalsController < ApplicationController
   end
 
   def overdue
-    #In Progress
-    today = Date.today
+    overdue_rentals = paginate_check(Rental.where("status = 'checked out' AND due_date < ?", Date.today))
 
-    overdue_rentals = Rental.where("status = 'checked out'")
-    overdue_rentals = overdue_rentals.where("due_date < ?", today)
+    if overdue_rentals.class == String
+      render json: {ok: false, message: "#{overdue_rentals} Please use valid parameters."}, status: :not_found
+    else
 
-    # overdue_rentals = Rental.where("due_date < ?", today).order("due_date") #due_date
-    # overdue_rentals = Rental.where("due_date < ?", today).order("checkout_date") #checkout_date
-    # overdue_rentals = Rental.joins(:movie).where("due_date < ?", today).order("movies.title") #title
-    # overdue_rentals = Rental.joins(:customer).where("due_date < ?", today).order("customers.name") #name
-    #
-    render :json => overdue_rentals, :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}}, :except => [:created_at, :updated_at] #works
+      if sort?
+        overdue_rentals = overdue_rentals.joins(:movie).order("movies.title") if rental_params["sort"] == "title"
+        overdue_rentals = overdue_rentals.joins(:customer).order("customers.name") if rental_params["sort"] == "name"
+        overdue_rentals = overdue_rentals.order(rental_params["sort"]) if  rental_params["sort"] == "due_date" || rental_params["sort"] == "checkout_date"
+      end
+
+      if rental_params["sort"] != nil && !(sort?)
+        render json: {ok: false, message: "Unable to sort with '#{rental_params["sort"]}'. Please use a valid parameter (title ,name, checkout_date, or due_date)"}, status: :not_found
+      elsif overdue_rentals
+        if overdue_rentals.length == 0
+          render json: {ok: true, message: "There are no overdue rentals!"}, status: :ok
+        else
+          render :json => overdue_rentals, :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}}, :except => [:created_at, :updated_at], status: :ok
+        end
+      end
+    end
 
   end
 
   private
 
-  def check_in_params
-    params.permit(:customer_id, :movie_id)
+  def rental_params
+    params.permit(:customer_id, :movie_id, :sort, :n, :p)
   end
 
-  def paginate_check
-    if movie_params["p"] && movie_params["n"]
-      return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
+  def paginate_check(overdue_rentals)
+    if rental_params["p"].nil? && rental_params["n"].nil?
+      return overdue_rentals
+    elsif rental_params["p"].nil? || rental_params["n"].nil?
+      return "Both p and n must be present and a number to paginate."
+    elsif (rental_params["p"] !~ /\D/) && (rental_params["n"] !~ /\D/)
+      return overdue_rentals.paginate(:page => rental_params["p"], :per_page => rental_params["n"])
     else
-      return Movie.all
+      return "Both p and n must be present and a number to paginate."
     end
   end
 
   def sort?
-    valid_fields = ["title" ,"release_date"]
-    if valid_fields.include? (movie_params["sort"])
+    valid_fields = ["title", "name", "checkout_date", "due_date"]
+    if valid_fields.include? (rental_params["sort"])
       return true
     else
       return false
