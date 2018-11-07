@@ -14,4 +14,14 @@ class Customer < ApplicationRecord
     end
   end
 
+  def check_out
+    checked_out_count = self.movies_checked_out_count + 1
+    self.update(movies_checked_out_count: checked_out_count)
+  end
+
+  def check_in
+    checked_out_count = self.movies_checked_out_count - 1
+    self.update(movies_checked_out_count: checked_out_count)
+  end
+
 end
