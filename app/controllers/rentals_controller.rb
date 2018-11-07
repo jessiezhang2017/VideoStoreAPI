@@ -1,5 +1,5 @@
+require "pry"
 class RentalsController < ApplicationController
-
 
   def check_out
 
@@ -57,6 +57,20 @@ class RentalsController < ApplicationController
       updated_available_inventory = movie.available_inventory + 1
       movie.update(available_inventory: updated_available_inventory)
     end
+
+  end
+
+  def overdue
+    #In Progress
+    # today = Date.today
+    # overdue_rentals = Rental.where("due_date < ?", today).order("due_date") #due_date
+    # overdue_rentals = Rental.where("due_date < ?", today).order("checkout_date") #checkout_date
+    # overdue_rentals = Rental.joins(:movie).where("due_date < ?", today).order("movies.title") #title
+    # overdue_rentals = Rental.joins(:customer).where("due_date < ?", today).order("customers.name") #name
+    #
+    # render :json => overdue_rentals,
+    #             :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}},
+    #             :except => [:created_at, :updated_at] #works
 
   end
 
