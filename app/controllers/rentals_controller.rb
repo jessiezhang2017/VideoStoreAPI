@@ -1,14 +1,11 @@
 class RentalsController < ApplicationController
 
   def check_out
-
     rental = Rental.check_out(params[:customer_id], params[:movie_id])
 
     if rental.save
-      updated_movie = rental.customer.movies_checked_out_count += 1
-      updated_inventory = rental.movie.available_inventory - 1
-      rental.movie.update(available_inventory: updated_inventory)
-      rental.customer.update(movies_checked_out_count: updated_movie)
+      rental.movie.check_out
+      rental.customer.check_out
 
       render json: { id: rental.id , checkout_date: rental.check_out_date, due_date:rental.due_date}, status:  :ok
     else
@@ -25,7 +22,6 @@ class RentalsController < ApplicationController
       current_rental.check_in
       render json: {ok: true, message: "Movie successfully returned"}, status: :ok
     end
-
   end
 
   def overdue
