@@ -15,10 +15,11 @@ JSON.parse(File.read('db/seeds/rentals.json')).each do |rental|
   new_rental.customer = customer
   new_rental.movie = movie
 
-  update_checked_out_count = customer.movies_checked_out_count + 1
-  customer.update(movies_checked_out_count: update_checked_out_count)
-  update_available_inventory = movie.available_inventory - 1
-  movie.update(available_inventory: update_available_inventory)
-
+  if new_rental.status != "returned"
+    update_checked_out_count = customer.movies_checked_out_count + 1
+    customer.update(movies_checked_out_count: update_checked_out_count)
+    update_available_inventory = movie.available_inventory - 1
+    movie.update(available_inventory: update_available_inventory)
+  end
   new_rental.save
 end

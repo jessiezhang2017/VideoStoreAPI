@@ -2,16 +2,8 @@ require "pry"
 class RentalsController < ApplicationController
 
   def check_out
-
     customer = Customer.find_by(id: params[:customer_id])
-    if customer.nil?
-      render json: {ok: false, message: "The #{name} for this customer was not found"}, status: :not_found
-    end
-
     movie = Movie.find_by(id: params[:movie_id])
-    if customer.nil?
-      render json: {ok: false, message: "The #{name} for this movie was not found"}, status: :not_found
-    end
 
     rental = Rental.new
     rental.customer = customer
@@ -27,11 +19,13 @@ class RentalsController < ApplicationController
 
       render json: { id: rental.id , checkout_date: rental.check_out_date, due_date:rental.due_date}, status:  :ok
     else
+      nil_response(customer, "customer")
+      nil_response(movie, "movie")
       render json: { ok: false, errors: rental.errors.messages}, status: :bad_request
     end
   end
 
-  def check_in
+  def check_in(movie_id, customer_id)
     movie = Movie.find_by(id: params[:movie_id])
     customer = Customer.find_by(id: params[:customer_id])
     current_rental = nil
@@ -43,11 +37,9 @@ class RentalsController < ApplicationController
       end
     end
 
-    if movie.nil?
+    if movie.nil? || customer.nil? || current_rental.nil?
       nil_response(movie, "movie")
-    elsif customer.nil?
       nil_response(customer, "customer")
-    elsif current_rental.nil?
       nil_response(current_rental, "rental agreement")
     else
       render json: {ok: true, message: "Movie successfully returned"}, status: :ok
@@ -62,15 +54,17 @@ class RentalsController < ApplicationController
 
   def overdue
     #In Progress
-    # today = Date.today
+    today = Date.today
+
+    overdue_rentals = Rental.where("status = 'checked out'")
+    overdue_rentals = overdue_rentals.where("due_date < ?", today)
+
     # overdue_rentals = Rental.where("due_date < ?", today).order("due_date") #due_date
     # overdue_rentals = Rental.where("due_date < ?", today).order("checkout_date") #checkout_date
     # overdue_rentals = Rental.joins(:movie).where("due_date < ?", today).order("movies.title") #title
     # overdue_rentals = Rental.joins(:customer).where("due_date < ?", today).order("customers.name") #name
     #
-    # render :json => overdue_rentals,
-    #             :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}},
-    #             :except => [:created_at, :updated_at] #works
+    render :json => overdue_rentals, :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}}, :except => [:created_at, :updated_at] #works
 
   end
 
@@ -83,6 +77,24 @@ class RentalsController < ApplicationController
   def nil_response(object, name)
     if object.nil?
       render json: {ok: false, message: "The #{name} for this rental was not found"}, status: :not_found
+      return
+    end
+  end
+
+  def paginate_check
+    if movie_params["p"] && movie_params["n"]
+      return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
+    else
+      return Movie.all
+    end
+  end
+
+  def sort?
+    valid_fields = ["title" ,"release_date"]
+    if valid_fields.include? (movie_params["sort"])
+      return true
+    else
+      return false
     end
   end
 
