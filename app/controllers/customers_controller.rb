@@ -4,7 +4,7 @@ class CustomersController < ApplicationController
   def index
     customers = Customer.all
     customers = Customer.paginate_check(customers, cust_params["p"], cust_params["n"])
-    customers = Customer.sort_check(customers, cust_params["sort"], ["name", "registered_at", "postal_code"]) if customers != String
+    customers = Customer.sort_check(customers, cust_params["sort"], ["name", "registered_at", "postal_code"]) if  customers.class != String
 
     if customers.class == String #return the error
       render json: {ok: false, message: customers }, status: :not_found
@@ -19,7 +19,7 @@ class CustomersController < ApplicationController
     if @customer
       current_rentals = @customer.find_rentals('checked out')
       current_rentals = Customer.paginate_check(current_rentals, cust_params["p"], cust_params["n"])
-      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals != String
+      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals.class != String
 
       if current_rentals.class == String #return the error
         render json: {ok: false, message: overdue_rentals }, status: :not_found
@@ -37,7 +37,7 @@ class CustomersController < ApplicationController
     if @customer
       current_rentals = @customer.find_rentals('returned')
       current_rentals = Customer.paginate_check(current_rentals, cust_params["p"], cust_params["n"])
-      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals != String
+      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals.class != String
 
       if current_rentals.class == String #return the error
         render json: {ok: false, message: overdue_rentals }, status: :not_found
