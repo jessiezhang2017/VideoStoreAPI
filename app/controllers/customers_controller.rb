@@ -1,7 +1,7 @@
 class CustomersController < ApplicationController
+before_action :find_customer, only: [:history, :current]
 
   def index
-
     if Customer.sort?(cust_params["sort"])
       customers = paginate_check.order(cust_params["sort"])
     else
@@ -18,10 +18,7 @@ class CustomersController < ApplicationController
   # GET /customers/:id/current
   # List the movies a customer currently has checked out (using customer id as params)
   def current
-    customer = Customer.find_by(id: cust_params["id"])
-    if customer.nil?
-      render json: { ok: false, message: "Unable to find customer with ID: #{cust_params["id"]}."}, status: :not_found
-    else
+    if @customer
       movies_checked_out = []
       customer.rentals.each do |rental|
         movies_checked_out << rental if rental.status == "checked out"
@@ -37,10 +34,7 @@ class CustomersController < ApplicationController
   # GET /customers/:id/history
   # List the movies a customer has checked out in the past
   def history
-    customer = Customer.find_by(id: cust_params["id"])
-    if customer.nil?
-      render json: { ok: false, message: "Unable to find customer with ID: #{cust_params["id"]}."}, status: :not_found
-    else
+    if @customer
       movies_checked_out_past = []
       customer.rentals.each do |rental|
         movies_checked_out_past << rental if rental.status == "returned"
@@ -54,6 +48,13 @@ class CustomersController < ApplicationController
   end
 
   private
+  def find_customer
+    @customer = customer.find_by(id: cust_params["id"])
+
+    if @customer.nil?
+      render json: { ok: false, message: "Unable to find customer with ID: #{cust_params["id"]}."}, status: :not_found
+    end
+  end
 
   def paginate_check
     if cust_params["p"] && cust_params["n"]
