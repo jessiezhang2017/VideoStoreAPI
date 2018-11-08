@@ -15,14 +15,4 @@ class Movie < ApplicationRecord
     end
   end
 
-  def check_in
-    updated_available_inventory = self.available_inventory + 1
-    self.update(available_inventory: updated_available_inventory)
-  end
-
-  def check_out
-    updated_available_inventory = self.available_inventory - 1
-    self.update(available_inventory: updated_available_inventory)
-  end
-
 end

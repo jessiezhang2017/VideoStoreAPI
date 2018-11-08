@@ -19,11 +19,11 @@ class MoviesController < ApplicationController
   def show
     # movie = Movie.find_by(id: params[:id])
     #
-    # if movie.nil?
-    #    render json: {ok: false, message: 'not found'}, status: :not_found
-    # else
+    if movie.nil?
+       render json: {ok: false, message: 'not found'}, status: :not_found
+    else
       render json: @movie.as_json(except: [:created_at, :updated_at]), status: :ok
-    # end
+    end
   end
 
   def zomg
@@ -49,12 +49,17 @@ class MoviesController < ApplicationController
 
     # binding.pry
     current_customers = []
-    current_rentals.each do |rental|
 
-      current_customers << rental.customer
+    current_rentals.each do |rental|
+      current_customer = {
+        "customer_name" => rental.customer.name,
+        "check_out_date" => rental.check_out_date,
+        "due_date" => rental.due_date
+      }
+      current_customers << current_customer
     end
 
-    render :json => current_customers, :include => {current_rentals => {:only => :check_out_date}},:except => [:created_at, :updated_at] #works
+    render current_customers.as_json, status: :OK
     # render :json => current_customers, :except => [:created_at, :updated_at] #works
 
   end
@@ -69,13 +74,14 @@ class MoviesController < ApplicationController
 
   def find_movie
     @movie = Movie.find(params[:id].to_i)
-    if @movie.nil?
-      render json: {ok: false, message: 'not found'}, status: :not_found
-    end
+    # if @movie.nil?
+    #   render json: {ok: false, message: 'not found'}, status: :not_found
+    # end
   end
 
   def paginate_check
     if movie_params["p"] && movie_params["n"]
+
       return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
     else
       return Movie.all
