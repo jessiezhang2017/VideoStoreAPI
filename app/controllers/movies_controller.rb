@@ -47,11 +47,11 @@ class MoviesController < ApplicationController
     if @movie
       @current_rentals = @movie.rentals.where("status = 'checked out'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
 
-      if @current_rentals == nil || @current_rentals = []
+      if @current_rentals != nil && @current_rentals != []
+        render json: { current_rentals: @current_rentals }
 
-         render json: {ok: false, message: 'no current rental for this movie'}, status: :not_found
       else
-         render json: { current_rentals: @current_rentals }
+         render json: {ok: false, message: 'no current rental for this movie'}, status: :not_found
       end
 
     else
@@ -61,7 +61,20 @@ class MoviesController < ApplicationController
   end
 
   def history
+    if @movie
+      @current_rentals = @movie.rentals.where("status = 'returned'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
 
+      if @current_rentals != nil && @current_rentals != []
+        render json: { current_rentals: @current_rentals }
+
+      else
+         render json: {ok: false, message: 'no returned rental for this movie'}, status: :not_found
+      end
+
+    else
+       render json: {ok: false, message: 'movie not found'}, status: :not_found
+
+    end
 
 
   end
@@ -69,7 +82,7 @@ class MoviesController < ApplicationController
   private
 
   def find_movie
-    @movie = Movie.find(params[:id].to_i)
+    @movie = Movie.find(params["id"])
     # if @movie.nil?
     #   render json: {ok: false, message: 'not found'}, status: :not_found
     # end
