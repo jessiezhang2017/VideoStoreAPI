@@ -58,14 +58,6 @@ class CustomersController < ApplicationController
     end
   end
 
-  def paginate_check
-    if cust_params["p"] && cust_params["n"]
-      return Customer.paginate(:page => cust_params["p"], :per_page => cust_params["n"])
-    else
-      return Customer.all
-    end
-  end
-
   def cust_params
     params.permit(:sort, :n, :p, :id)
   end
