@@ -1,5 +1,5 @@
 class CustomersController < ApplicationController
-before_action :find_customer, only: [:history, :current]
+  before_action :find_customer, only: [:history, :current]
 
   def index
     if Customer.sort?(cust_params["sort"])
@@ -19,14 +19,11 @@ before_action :find_customer, only: [:history, :current]
   # List the movies a customer currently has checked out (using customer id as params)
   def current
     if @customer
-      movies_checked_out = []
-      @customer.rentals.each do |rental|
-        movies_checked_out << rental if rental.status == "checked out"
-      end
-      if movies_checked_out == []
+      current_rentals = @customer.rentals.where("status = 'checked out'").map { |rental| { title: rental.movie.title, check_out_date: rental.check_out_date, due_date: rental.due_date } }
+      if current_rentals == []
         render json: { ok: true, message: "#{@customer.name} has 0 movies checked out."}, status: :ok
       else
-        render :json => movies_checked_out, :include => {:movie => {:only => :title}}, :only => [:check_out_date, :due_date], status: :ok
+        render json: { current_rentals: current_rentals }, status: :ok
       end
     end
   end
@@ -35,14 +32,11 @@ before_action :find_customer, only: [:history, :current]
   # List the movies a customer has checked out in the past
   def history
     if @customer
-      movies_checked_out_past = []
-      @customer.rentals.each do |rental|
-        movies_checked_out_past << rental if rental.status == "returned"
-      end
-      if movies_checked_out_past == []
+      past_rentals = @customer.rentals.where("status = 'returned'").map { |rental| { title: rental.movie.title, check_out_date: rental.check_out_date, due_date: rental.due_date } }
+      if past_rentals == []
         render json: { ok: true, message: "#{@customer.name} has 0 past rentals."}, status: :ok
       else
-        render :json => movies_checked_out_past, :include => {:movie => {:only => :title}}, :only => [:check_out_date, :due_date], status: :ok
+        render json: { past_rentals: past_rentals }, status: :ok
       end
     end
   end
