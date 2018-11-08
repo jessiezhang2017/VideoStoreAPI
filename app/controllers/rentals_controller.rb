@@ -26,9 +26,10 @@ class RentalsController < ApplicationController
 
   def overdue
     overdue_rentals = Rental.paginate_check(Rental.where("status = 'checked out' AND due_date < ?", Date.today), rental_params["p"], rental_params["n"])
-    #if overdue_rentals is a String, that string is an error message
+
     overdue_rentals = Rental.sort_check(overdue_rentals, rental_params["sort"]) if overdue_rentals.class != String
-    if overdue_rentals.class == String
+
+    if overdue_rentals.class == String #if overdue_rentals is a String, that string is an error message
       render json: {ok: false, message: overdue_rentals }, status: :not_found
     elsif overdue_rentals.length == 0
       render json: {ok: true, message: "There are no overdue rentals!"}, status: :ok
