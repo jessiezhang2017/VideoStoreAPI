@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   get "/customers", to: "customers#index", as: "customers"
   get "/customers/:id/current", to: "customers#current", as: "current_customers"
+  get "/customers/:id/history", to: "customers#history", as: "past_customers"
 
   get "/zomg", to: "movies#zomg", as: "zomg"
 

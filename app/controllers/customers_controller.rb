@@ -27,9 +27,28 @@ class CustomersController < ApplicationController
         movies_checked_out << rental if rental.status == "checked out"
       end
       if movies_checked_out == []
-        render json: { ok: false, message: "#{customer.name} has 0 movies checked out."}, status: :ok
+        render json: { ok: true, message: "#{customer.name} has 0 movies checked out."}, status: :ok
       else
-      render :json => movies_checked_out, :include => {:movie => {:only => :title}}, :only => [:checkout_date, :due_date], status: :ok
+        render :json => movies_checked_out, :include => {:movie => {:only => :title}}, :only => [:check_out_date, :due_date], status: :ok
+      end
+    end
+  end
+
+  # GET /customers/:id/history
+  # List the movies a customer has checked out in the past
+  def history
+    customer = Customer.find_by(id: cust_params["id"])
+    if customer.nil?
+      render json: { ok: false, message: "Unable to find customer with ID: #{cust_params["id"]}."}, status: :not_found
+    else
+      movies_checked_out_past = []
+      customer.rentals.each do |rental|
+        movies_checked_out_past << rental if rental.status == "returned"
+      end
+      if movies_checked_out_past == []
+        render json: { ok: true, message: "#{customer.name} has 0 past rentals."}, status: :ok
+      else
+        render :json => movies_checked_out_past, :include => {:movie => {:only => :title}}, :only => [:check_out_date, :due_date], status: :ok
       end
     end
   end
