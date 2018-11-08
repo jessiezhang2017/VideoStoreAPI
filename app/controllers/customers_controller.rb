@@ -8,7 +8,6 @@ class CustomersController < ApplicationController
       customers = paginate_check
     end
 
-
     if customers
       render json: customers.as_json( only: [:id, :name, :registered_at, :postal_code, :phone, :movies_checked_out_count] ), status: :ok
     else
