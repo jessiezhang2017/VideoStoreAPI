@@ -43,25 +43,21 @@ class MoviesController < ApplicationController
 
 
   def current
-# List customers that have currently checked out a copy of the film
 
-    current_rentals = @movie.rentals.where("status = 'checked out'")
+    if @movie
+      @current_rentals = @movie.rentals.where("status = 'checked out'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
 
-    # binding.pry
-    current_customers = []
+      if @current_rentals == nil || @current_rentals = []
 
-    current_rentals.each do |rental|
-      current_customer = {
-        "customer_name" => rental.customer.name,
-        "check_out_date" => rental.check_out_date,
-        "due_date" => rental.due_date
-      }
-      current_customers << current_customer
+         render json: {ok: false, message: 'no current rental for this movie'}, status: :not_found
+      else
+         render json: { current_rentals: @current_rentals }
+      end
+
+    else
+       render json: {ok: false, message: 'movie not found'}, status: :not_found
+
     end
-
-    render current_customers.as_json, status: :OK
-    # render :json => current_customers, :except => [:created_at, :updated_at] #works
-
   end
 
   def history
@@ -91,6 +87,5 @@ class MoviesController < ApplicationController
   def movie_params
     params.permit(:title, :overview, :release_date, :inventory, :sort, :n, :p)
   end
-
 
 end
