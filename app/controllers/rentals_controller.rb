@@ -28,28 +28,15 @@ class RentalsController < ApplicationController
 
   def overdue
     overdue_rentals = paginate_check(Rental.where("status = 'checked out' AND due_date < ?", Date.today))
-
+    overdue_rentals = sort_check(overdue_rentals) if overdue_rentals.class != String
+    #if overdue_rentals is a String, that string is an error message
     if overdue_rentals.class == String
-      render json: {ok: false, message: "#{overdue_rentals} Please use valid parameters."}, status: :not_found
+      render json: {ok: false, message: overdue_rentals }, status: :not_found
+    elsif overdue_rentals.length == 0
+      render json: {ok: true, message: "There are no overdue rentals!"}, status: :ok
     else
-
-      if sort?
-        overdue_rentals = overdue_rentals.joins(:movie).order("movies.title") if rental_params["sort"] == "title"
-        overdue_rentals = overdue_rentals.joins(:customer).order("customers.name") if rental_params["sort"] == "name"
-        overdue_rentals = overdue_rentals.order(rental_params["sort"]) if  rental_params["sort"] == "due_date" || rental_params["sort"] == "checkout_date"
-      end
-
-      if rental_params["sort"] != nil && !(sort?)
-        render json: {ok: false, message: "Unable to sort with '#{rental_params["sort"]}'. Please use a valid parameter (title ,name, checkout_date, or due_date)"}, status: :not_found
-      elsif overdue_rentals
-        if overdue_rentals.length == 0
-          render json: {ok: true, message: "There are no overdue rentals!"}, status: :ok
-        else
-          render :json => overdue_rentals, :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}}, :except => [:created_at, :updated_at], status: :ok
-        end
-      end
+      render :json => overdue_rentals, :include => {:movie => {:only => :title}, :customer => {:only => [:name, :postal_code]}}, :except => [:created_at, :updated_at], status: :ok
     end
-
   end
 
   private
@@ -62,22 +49,25 @@ class RentalsController < ApplicationController
     if rental_params["p"].nil? && rental_params["n"].nil?
       return overdue_rentals
     elsif rental_params["p"].nil? || rental_params["n"].nil?
-      return "Both p and n must be present and a number to paginate."
+      return "Both 'p' and 'n' must be present and a number to paginate. Please resubmit with valid parameters."
     elsif (rental_params["p"] !~ /\D/) && (rental_params["n"] !~ /\D/)
       return overdue_rentals.paginate(:page => rental_params["p"], :per_page => rental_params["n"])
     else
-      return "Both p and n must be present and a number to paginate."
+      return "Both 'p' and 'n' must be present and a number to paginate. Please resubmit with valid parameters."
     end
   end
 
-  def sort?
+  def sort_check(overdue_rentals)
     valid_fields = ["title", "name", "checkout_date", "due_date"]
-    if valid_fields.include? (rental_params["sort"])
-      return true
+    if rental_params["sort"].nil?
+      return overdue_rentals
+    elsif valid_fields.include? (rental_params["sort"])
+      return overdue_rentals.joins(:movie).order("movies.title") if rental_params["sort"] == "title"
+      return overdue_rentals.joins(:customer).order("customers.name") if rental_params["sort"] == "name"
+      return overdue_rentals.order(rental_params["sort"])
     else
-      return false
+      return "Unable to sort with '#{rental_params["sort"]}'. Please resubmit with a valid sort parameter (title ,name, checkout_date, or due_date)"
     end
   end
-
 
 end
