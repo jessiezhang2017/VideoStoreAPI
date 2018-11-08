@@ -8,8 +8,9 @@ Rails.application.routes.draw do
   post "/rentals/check-out", to: "rentals#check_out", as: "check_out_movie"
   post "/rentals/check-in", to: "rentals#check_in", as: "check_in_movie"
   get "/rentals/overdue", to: "rentals#overdue", as: "overdue"
-  
+
   get "/customers", to: "customers#index", as: "customers"
+  get "/customers/:id/current", to: "customers#current", as: "current_customers"
 
   get "/zomg", to: "movies#zomg", as: "zomg"
 

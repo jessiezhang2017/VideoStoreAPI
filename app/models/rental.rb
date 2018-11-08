@@ -10,8 +10,9 @@ class Rental < ApplicationRecord
 
   def self.check_out(customer_id, movie_id)
     rental = Rental.new(customer_id: customer_id, movie_id: movie_id)
-    rental.check_out_date = Date.today
-    rental.due_date = rental.check_out_date + 7
+    today = Date.today
+    rental.check_out_date = today
+    rental.due_date = today + 7
     return rental
   end
 
