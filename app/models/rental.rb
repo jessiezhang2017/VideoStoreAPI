@@ -21,4 +21,29 @@ class Rental < ApplicationRecord
     self.update(status: "returned")
   end
 
+  def self.paginate_check(overdue_rentals, params_p, params_n)
+    if params_p.nil? && params_n.nil?
+      return overdue_rentals
+    elsif params_p.nil? || params_n.nil?
+      return "Both 'p' and 'n' must be present and a number to paginate. Please resubmit with valid parameters."
+    elsif (params_p !~ /\D/) && (params_n !~ /\D/)
+      return overdue_rentals.paginate(:page => params_p, :per_page => params_n)
+    else
+      return "Both 'p' and 'n' must be present and a number to paginate. Please resubmit with valid parameters."
+    end
+  end
+
+  def self.sort_check(overdue_rentals, params_sort)
+    valid_fields = ["title", "name", "checkout_date", "due_date"]
+    if params_sort.nil?
+      return overdue_rentals
+    elsif valid_fields.include? (params_sort)
+      return overdue_rentals.joins(:movie).order("movies.title") if params_sort == "title"
+      return overdue_rentals.joins(:customer).order("customers.name") if params_sort == "name"
+      return overdue_rentals.order(params_sort)
+    else
+      return "Unable to sort with '#{params_sort}'. Please resubmit with a valid sort parameter (title ,name, checkout_date, or due_date)"
+    end
+  end
+
 end
