@@ -20,11 +20,11 @@ before_action :find_customer, only: [:history, :current]
   def current
     if @customer
       movies_checked_out = []
-      customer.rentals.each do |rental|
+      @customer.rentals.each do |rental|
         movies_checked_out << rental if rental.status == "checked out"
       end
       if movies_checked_out == []
-        render json: { ok: true, message: "#{customer.name} has 0 movies checked out."}, status: :ok
+        render json: { ok: true, message: "#{@customer.name} has 0 movies checked out."}, status: :ok
       else
         render :json => movies_checked_out, :include => {:movie => {:only => :title}}, :only => [:check_out_date, :due_date], status: :ok
       end
@@ -36,11 +36,11 @@ before_action :find_customer, only: [:history, :current]
   def history
     if @customer
       movies_checked_out_past = []
-      customer.rentals.each do |rental|
+      @customer.rentals.each do |rental|
         movies_checked_out_past << rental if rental.status == "returned"
       end
       if movies_checked_out_past == []
-        render json: { ok: true, message: "#{customer.name} has 0 past rentals."}, status: :ok
+        render json: { ok: true, message: "#{@customer.name} has 0 past rentals."}, status: :ok
       else
         render :json => movies_checked_out_past, :include => {:movie => {:only => :title}}, :only => [:check_out_date, :due_date], status: :ok
       end
@@ -49,7 +49,7 @@ before_action :find_customer, only: [:history, :current]
 
   private
   def find_customer
-    @customer = customer.find_by(id: cust_params["id"])
+    @customer = Customer.find_by(id: cust_params["id"])
 
     if @customer.nil?
       render json: { ok: false, message: "Unable to find customer with ID: #{cust_params["id"]}."}, status: :not_found
