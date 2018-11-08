@@ -2,16 +2,14 @@ class CustomersController < ApplicationController
   before_action :find_customer, only: [:history, :current]
 
   def index
-    if Customer.sort?(cust_params["sort"])
-      customers = paginate_check.order(cust_params["sort"])
-    else
-      customers = paginate_check
-    end
+    customers = Customer.all
+    customers = Customer.paginate_check(customers, cust_params["p"], cust_params["n"])
+    customers = Customer.sort_check(customers, cust_params["sort"], ["name", "registered_at", "postal_code"]) if customers != String
 
-    if customers
-      render json: customers.as_json( only: [:id, :name, :registered_at, :postal_code, :phone, :movies_checked_out_count] ), status: :ok
+    if customers.class == String #return the error
+      render json: {ok: false, message: customers }, status: :not_found
     else
-      render json: {ok: false, message: 'not found'}, status: :not_found
+      render json: customers.as_json( only: [:id, :name, :registered_at, :postal_code, :phone, :movies_checked_out_count] ), status: :ok
     end
   end
 
@@ -19,8 +17,13 @@ class CustomersController < ApplicationController
   # List the movies a customer currently has checked out (using customer id as params)
   def current
     if @customer
-      current_rentals = @customer.rentals.where("status = 'checked out'").map { |rental| { title: rental.movie.title, check_out_date: rental.check_out_date, due_date: rental.due_date } }
-      if current_rentals == []
+      current_rentals = @customer.find_rentals('checked out')
+      current_rentals = Customer.paginate_check(current_rentals, cust_params["p"], cust_params["n"])
+      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals != String
+
+      if current_rentals.class == String #return the error
+        render json: {ok: false, message: overdue_rentals }, status: :not_found
+      elsif current_rentals == []
         render json: { ok: true, message: "#{@customer.name} has 0 movies checked out."}, status: :ok
       else
         render json: { current_rentals: current_rentals }, status: :ok
@@ -32,8 +35,13 @@ class CustomersController < ApplicationController
   # List the movies a customer has checked out in the past
   def history
     if @customer
-      past_rentals = @customer.rentals.where("status = 'returned'").map { |rental| { title: rental.movie.title, check_out_date: rental.check_out_date, due_date: rental.due_date } }
-      if past_rentals == []
+      current_rentals = @customer.find_rentals('returned')
+      current_rentals = Customer.paginate_check(current_rentals, cust_params["p"], cust_params["n"])
+      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals != String
+
+      if current_rentals.class == String #return the error
+        render json: {ok: false, message: overdue_rentals }, status: :not_found
+      elsif past_rentals == []
         render json: { ok: true, message: "#{@customer.name} has 0 past rentals."}, status: :ok
       else
         render json: { past_rentals: past_rentals }, status: :ok
