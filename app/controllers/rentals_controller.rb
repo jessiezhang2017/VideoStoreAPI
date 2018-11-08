@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-
-
-=======
->>>>>>> e1c2758513122fb5d7bd47321e6209b5e7d67997
 class RentalsController < ApplicationController
 
   def check_out
