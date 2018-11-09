@@ -1,4 +1,4 @@
-require "pry"
+
 class MoviesController < ApplicationController
   before_action :find_movie, only: [:show, :current, :history]
 
@@ -17,8 +17,7 @@ class MoviesController < ApplicationController
   end
 
   def show
-    # movie = Movie.find_by(id: params[:id])
-    #
+
     if movie.nil?
        render json: {ok: false, message: 'not found'}, status: :not_found
     else
@@ -45,10 +44,11 @@ class MoviesController < ApplicationController
   def current
 
     if @movie
-      @current_rentals = @movie.rentals.where("status = 'checked out'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
 
-      if @current_rentals != nil && @current_rentals != []
-        render json: { current_rentals: @current_rentals }
+      current_rentals = Movie.checked_out_rentals(@movie)
+
+      if current_rentals != nil && current_rentals != []
+        render json: { current_rentals: current_rentals }
 
       else
          render json: {ok: false, message: 'no current rental for this movie'}, status: :not_found
@@ -62,10 +62,11 @@ class MoviesController < ApplicationController
 
   def history
     if @movie
-      @current_rentals = @movie.rentals.where("status = 'returned'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
 
-      if @current_rentals != nil && @current_rentals != []
-        render json: { current_rentals: @current_rentals }
+      current_rentals = Movie.returned_rentals(@movie)
+
+      if current_rentals != nil && current_rentals != []
+        render json: { current_rentals: current_rentals }
 
       else
          render json: {ok: false, message: 'no returned rental for this movie'}, status: :not_found
@@ -83,9 +84,7 @@ class MoviesController < ApplicationController
 
   def find_movie
     @movie = Movie.find(params["id"])
-    # if @movie.nil?
-    #   render json: {ok: false, message: 'not found'}, status: :not_found
-    # end
+
   end
 
   def paginate_check

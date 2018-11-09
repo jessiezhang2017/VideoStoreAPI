@@ -2,7 +2,7 @@ class Movie < ApplicationRecord
   has_many :rentals
   has_many :customers, through: :rentals
 
-  validates :title, presence: true
+  validates :title, presence: true, uniqueness: true
   validates :inventory, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :available_inventory, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
@@ -13,6 +13,16 @@ class Movie < ApplicationRecord
     else
       return false
     end
+  end
+
+  def self.checked_out_rentals(movie)
+
+    return movie.rentals.where("status = 'checked out'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
+
+  end
+
+  def self.returned_rentals(movie)
+    return movie.rentals.where("status = 'returned'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
   end
 
 end
