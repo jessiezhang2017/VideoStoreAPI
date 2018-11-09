@@ -1,5 +1,4 @@
 require "test_helper"
-require "pry"
 describe RentalsController do
   describe "check_out" do
     let(:movie) { movies(:ring)  }
@@ -124,13 +123,6 @@ describe RentalsController do
   end
 
   describe "overdue" do
-    # get "/rentals/overdue", to: "rentals#overdue", as: "overdue"
-    # let(:check_out_data) {
-    #   {
-    #     sort: "toast"
-    #   }
-    # }
-
     it "renders json" do
       get overdue_path
 
@@ -258,5 +250,5 @@ describe RentalsController do
       end
     end
   end
-  
+
 end
