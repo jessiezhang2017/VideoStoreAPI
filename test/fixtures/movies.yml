@@ -21,3 +21,10 @@ titanic:
   release_date: 1997-11-05
   inventory: 5
   available_inventory: 5
+
+thorn:
+  title: Thorn
+  overview: masterpiece
+  release_date: 1997-11-05
+  inventory: 5
+  available_inventory: 5

@@ -28,8 +28,10 @@ class Movie < ApplicationRecord
   end
 
   def check_out
-    available_inventory_count = self.available_inventory - 1
-    self.update(available_inventory: available_inventory_count)
+    if self.available_inventory > 0
+      available_inventory_count = self.available_inventory - 1
+      self.update(available_inventory: available_inventory_count)
+    end
   end
 
   def check_in
