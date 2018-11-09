@@ -2,7 +2,7 @@
 
 mike:
   name: Mike
-  registered_at: 2018-11-05 13:04:00
+  registered_at: 2018-10-01 13:04:00
   address: 100 10th Ave
   city: Seattle
   state: WA
@@ -12,7 +12,17 @@ mike:
 
 lily:
   name: Lily
-  registered_at: 2018-11-05 13:04:00
+  registered_at: 2018-10-01 13:04:00
+  address: 8 5th Ave
+  city: Issaquah
+  state: WA
+  postal_code: 98010
+  phone: 206-333-1888
+  movies_checked_out_count: 1
+
+mary:
+  name: Mary
+  registered_at: 2018-10-01 13:04:00
   address: 8 5th Ave
   city: Issaquah
   state: WA

@@ -133,4 +133,103 @@ describe "show" do
     expect(body.keys.sort).must_equal fields
   end
  end
+
+ describe "current" do
+   it "is a real working route and returns JSON" do
+     # Act
+     get current_customers_path(movies(:taken).id)
+
+     # Assert
+     expect(response.header['Content-Type']).must_include 'json'
+     must_respond_with :success
+   end
+
+   it "returns an Array " do
+     # Act
+     get current_customers_path(movies(:taken).id)
+
+     # Convert the JSON response into a Hash
+     body = JSON.parse(response.body)
+
+     # Assert
+     expect(body).must_be_kind_of Array
+   end
+
+   it "returns all of the current customers of that movie" do
+     # Act
+     get current_customers_path(movies(:taken).id)
+
+     # Convert the JSON response into a Hash
+     body = JSON.parse(response.body)
+
+     # Assert
+     expect(body.length).must_equal 1
+   end
+
+   it "returns customers with exactly the required fields" do
+     fields = %w(check_out_date customer_id customer_name due_date postal_code)
+
+     # Act
+     get current_customers_path(movies(:taken).id)
+
+     # Convert the JSON response into a Hash
+     body = JSON.parse(response.body)
+
+     # Assert that each
+     body.each do |customer|
+       expect(customer.keys.sort).must_equal fields
+       expect(customer.keys.length).must_equal fields.length
+     end
+   end
+ end
+
+ describe "history" do
+   it "is a real working route and returns JSON" do
+     # Act
+     get history_customers_path(movies(:taken).id)
+
+     # Assert
+     expect(response.header['Content-Type']).must_include 'json'
+     must_respond_with :success
+   end
+
+   it "returns an Array" do
+     # Act
+     get history_customers_path(movies(:taken).id)
+
+     # Convert the JSON response into a Hash
+     body = JSON.parse(response.body)
+
+     # Assert
+     expect(body).must_be_kind_of Array
+   end
+
+   it "returns all of the current customers of that movie" do
+     # Act
+     get history_customers_path(movies(:taken).id)
+
+     # Convert the JSON response into a Hash
+     body = JSON.parse(response.body)
+
+     # Assert
+     expect(body.length).must_equal 2
+   end
+
+   it "returns customers with exactly the required fields" do
+     fields = %w(check_out_date customer_id customer_name due_date postal_code)
+
+     # Act
+     get history_customers_path(movies(:taken).id)
+
+     # Convert the JSON response into a Hash
+     body = JSON.parse(response.body)
+
+     # Assert that each
+     body.each do |customer|
+       expect(customer.keys.sort).must_equal fields
+       expect(customer.keys.length).must_equal fields.length
+     end
+   end
+ end
+
 end

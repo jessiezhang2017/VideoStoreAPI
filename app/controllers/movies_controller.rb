@@ -4,9 +4,9 @@ class MoviesController < ApplicationController
 
   def index
     if Movie.sort?(movie_params["sort"])
-      movies = Movie.paginate_check(movie_params["p"], movie_params["n"]).order(movie_params["sort"])
+      movies = paginate_check.order(movie_params["sort"])
     else
-      movies = Movie.paginate_check(movie_params["p"], movie_params["n"])
+      movies = paginate_check
     end
 
     if movies
@@ -48,7 +48,7 @@ class MoviesController < ApplicationController
       current_rentals = Movie.checked_out_rentals(@movie)
 
       if current_rentals != nil && current_rentals != []
-        render json: { current_rentals: current_rentals }
+        render json: current_rentals
 
       else
          render json: {ok: false, message: 'no current rental for this movie'}, status: :not_found
@@ -63,10 +63,10 @@ class MoviesController < ApplicationController
   def history
     if @movie
 
-      current_rentals = Movie.returned_rentals(@movie)
+      history_rentals = Movie.returned_rentals(@movie)
 
-      if current_rentals != nil && current_rentals != []
-        render json: { current_rentals: current_rentals }
+      if history_rentals != nil && history_rentals != []
+        render json: history_rentals
 
       else
          render json: {ok: false, message: 'no returned rental for this movie'}, status: :not_found
@@ -83,13 +83,21 @@ class MoviesController < ApplicationController
   private
 
   def find_movie
-    @movie = Movie.find(params["id"])
+    @movie = Movie.find_by(id: movie_params["id"])
 
   end
 
+  def paginate_check
+    if movie_params["p"] && movie_params["n"]
+
+      return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
+    else
+      return Movie.all
+    end
+  end
 
   def movie_params
-    params.permit(:title, :overview, :release_date, :inventory, :sort, :n, :p)
+    params.permit(:title, :overview, :release_date, :inventory, :sort, :n, :p, :id)
   end
 
 end
