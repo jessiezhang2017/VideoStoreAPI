@@ -4,9 +4,9 @@ class MoviesController < ApplicationController
 
   def index
     if Movie.sort?(movie_params["sort"])
-      movies = paginate_check.order(movie_params["sort"])
+      movies = Movie.paginate_check(movie_params["p"], movie_params["n"]).order(movie_params["sort"])
     else
-      movies = paginate_check
+      movies = Movie.paginate_check(movie_params["p"], movie_params["n"])
     end
 
     if movies
@@ -17,8 +17,7 @@ class MoviesController < ApplicationController
   end
 
   def show
-    # movie = Movie.find_by(id: params[:id])
-    #
+
     if @movie.nil?
        render json: {ok: false, message: 'not found'}, status: :not_found
     else
@@ -88,14 +87,6 @@ class MoviesController < ApplicationController
 
   end
 
-  def paginate_check
-    if movie_params["p"] && movie_params["n"]
-
-      return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
-    else
-      return Movie.all
-    end
-  end
 
   def movie_params
     params.permit(:title, :overview, :release_date, :inventory, :sort, :n, :p)

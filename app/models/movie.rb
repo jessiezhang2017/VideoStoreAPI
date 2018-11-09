@@ -15,6 +15,15 @@ class Movie < ApplicationRecord
     end
   end
 
+  def self.paginate_check(param_p, param_n)
+    if param_p && param_n
+
+      return Movie.paginate(:page => param_p, :per_page => param_n)
+    else
+      return Movie.all
+    end
+  end
+
   def self.checked_out_rentals(movie)
 
     return movie.rentals.where("status = 'checked out'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
@@ -34,5 +43,5 @@ class Movie < ApplicationRecord
   def check_in
     checked_in_count = self.available_inventory + 1
     self.update(available_inventory: checked_in_count)
-
+  end
 end
