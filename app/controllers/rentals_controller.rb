@@ -7,7 +7,7 @@ class RentalsController < ApplicationController
       rental.movie.check_out
       rental.customer.check_out
 
-      render json: { id: rental.id , checkout_date: rental.check_out_date, due_date:rental.due_date}, status:  :ok
+      render json: { id: rental.id , check_out_date: rental.check_out_date, due_date:rental.due_date}, status:  :ok
     else
       render json: { ok: false, errors: rental.errors.messages}, status: :bad_request
     end

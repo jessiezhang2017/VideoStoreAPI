@@ -27,13 +27,13 @@ class Movie < ApplicationRecord
 
   end
 
-  # def check_out
-  #   available_inventory_count = self.available_inventory - 1
-  #   self.update(available_inventory: available_inventory_count)
-  # end
-  #
-  # def check_in
-  #   checked_in_count = self.available_inventory + 1
-  #   self.update(available_inventory: checked_in_count)
-  # end
+  def check_out
+    available_inventory_count = self.available_inventory - 1
+    self.update(available_inventory: available_inventory_count)
+  end
+
+  def check_in
+    checked_in_count = self.available_inventory + 1
+    self.update(available_inventory: checked_in_count)
+  end
 end

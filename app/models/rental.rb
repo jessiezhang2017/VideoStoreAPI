@@ -35,7 +35,7 @@ class Rental < ApplicationRecord
   end
 
   def self.sort_check(overdue_rentals, params_sort)
-    valid_fields = ["title", "name", "checkout_date", "due_date"]
+    valid_fields = ["title", "name", "check_out_date", "due_date"]
     if params_sort.nil?
       return overdue_rentals
     elsif valid_fields.include? (params_sort)
@@ -43,7 +43,7 @@ class Rental < ApplicationRecord
       return overdue_rentals.joins(:customer).order("customers.name") if params_sort == "name"
       return overdue_rentals.order(params_sort)
     else
-      return "Unable to sort with '#{params_sort}'. Please resubmit with a valid sort parameter (title ,name, checkout_date, or due_date)"
+      return "Unable to sort with '#{params_sort}'. Please resubmit with a valid sort parameter (title ,name, check_out_date, or due_date)"
     end
   end
 
