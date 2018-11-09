@@ -85,9 +85,8 @@ describe Customer do
       checked_out_rentals = customer.find_rentals("checked out")
 
       checked_out_rentals.each do |rental|
-        expect(rental).must_include :title
-        expect(rental).must_include :check_out_date
-        expect(rental).must_include :due_date
+        expect(rental.status).must_equal "checked out"
+        expect(rental.customer).must_equal customer
       end
     end
 
