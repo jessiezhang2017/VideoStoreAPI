@@ -2,8 +2,8 @@ class RentalsController < ApplicationController
 
   def check_out
     rental = Rental.check_out(rental_params[:customer_id], rental_params[:movie_id])
-
-    if rental.save
+    movie = Movie.find_by(id:rental_params[:movie_id])
+    if rental.save && movie.available_inventory > 0
       rental.movie.check_out
       rental.customer.check_out
 

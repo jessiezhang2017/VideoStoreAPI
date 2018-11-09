@@ -101,6 +101,34 @@ describe MoviesController do
         expect(movie.keys.length).must_equal fields.length
       end
     end
+
+    it "paginates movies if n and p params are numeric and positive" do
+
+      params = {"sort"=>"title", "p"=>"1", "n"=>"3"}
+
+      get movies_path, params: params
+      body = JSON.parse(response.body)
+      expect(body.length).must_equal 3
+    end
+
+    it "sort movies if sort param is title or release_date" do
+
+      params = {"sort"=>"title", "p"=>"1", "n"=>"3"}
+
+      get movies_path, params: params
+      body = JSON.parse(response.body)
+      expect(body.last["title"]).must_equal "Thorn"
+    end
+
+
+    it "returns a string if n or p params are not numeric or positive" do
+      params = {"sort"=>"title", "p"=>"test", "n"=>"test"}
+      get movies_path, params: params
+      body = JSON.parse(response.body)
+
+      expect(body["message"]).must_equal "both P and n must be postive numbers "
+
+    end
   end
 
 describe "show" do

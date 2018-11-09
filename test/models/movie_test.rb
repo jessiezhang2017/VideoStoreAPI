@@ -202,4 +202,40 @@ describe Movie do
    end
  end
 
+ describe "check_out" do
+   before do
+     @movie = movies(:thorn)
+   end
+   it "reduce the inventory by one " do
+     stock_before = @movie.available_inventory
+     @movie.check_out
+     stock_after = @movie.available_inventory
+     expect(stock_after).must_equal (stock_before - 1)
+
+   end
+
+   it "do not reduce the inventory to check out a movie with 0 availabe inventory" do
+      movie_2 = movies(:taken)
+      movie_2.check_out
+      stock_before = movie_2.available_inventory
+      movie_2.check_out
+
+      stock_after = movie_2.available_inventory
+
+      expect(stock_after).must_equal  stock_before
+   end
+ end
+
+ describe "check_in" do
+   before do
+     @movie = movies(:thorn)
+   end
+   it "increase the inventory by one " do
+     stock_before = @movie.available_inventory
+     @movie.check_in
+     stock_after = @movie.available_inventory
+     expect(stock_after).must_equal (stock_before + 1)
+
+   end
+ end
 end

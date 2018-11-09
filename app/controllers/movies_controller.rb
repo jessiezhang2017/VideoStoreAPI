@@ -4,9 +4,19 @@ class MoviesController < ApplicationController
 
   def index
     if Movie.sort?(movie_params["sort"])
-      movies = paginate_check.order(movie_params["sort"])
+      if paginate_check.class != String
+        movies = paginate_check.order(movie_params["sort"])
+      else
+        render json: {ok: false, message: paginate_check}, status: :not_found
+        return
+      end
     else
-      movies = paginate_check
+      if paginate_check.class != String
+        movies = paginate_check
+      else
+        render json: {ok: false, message: paginate_check}, status: :not_found
+        return
+      end
     end
 
     if movies
@@ -88,11 +98,14 @@ class MoviesController < ApplicationController
   end
 
   def paginate_check
-    if movie_params["p"] && movie_params["n"]
+    # (movie_params["p"] !~ /\D/) && (movie_params["n"] !~ /\D/)
+    if (movie_params["p"] !~ /\D/) && (movie_params["n"] !~ /\D/)
 
       return Movie.paginate(:page => movie_params["p"], :per_page => movie_params["n"])
-    else
+    elsif movie_params["p"] == nil && movie_params["p"] == nil
       return Movie.all
+    else
+      return "both P and n must be postive numbers "
     end
   end
 
