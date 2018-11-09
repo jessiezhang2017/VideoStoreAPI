@@ -23,6 +23,16 @@ class Movie < ApplicationRecord
 
   def self.returned_rentals(movie)
     return movie.rentals.where("status = 'returned'").map { |rental| { customer_id: rental.customer.id, customer_name: rental.customer.name, postal_code: rental.customer.postal_code, check_out_date: rental.check_out_date, due_date: rental.due_date } }
+
   end
+
+  def check_out
+    available_inventory_count = self.available_inventory - 1
+    self.update(available_inventory: available_inventory_count)
+  end
+
+  def check_in
+    checked_in_count = self.available_inventory + 1
+    self.update(available_inventory: checked_in_count)
 
 end
