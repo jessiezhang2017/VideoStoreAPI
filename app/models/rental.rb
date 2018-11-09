@@ -43,7 +43,7 @@ class Rental < ApplicationRecord
       return overdue_rentals.joins(:customer).order("customers.name") if params_sort == "name"
       return overdue_rentals.order(params_sort)
     else
-      return "Unable to sort with '#{params_sort}'. Please resubmit with a valid sort parameter (title ,name, checkout_date, or due_date)"
+      return "Unable to sort with '#{params_sort}'. Please resubmit with a valid sort parameter (title ,name, check_out_date, or due_date)"
     end
   end
 

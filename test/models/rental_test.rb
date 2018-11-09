@@ -19,7 +19,7 @@ describe Rental do
 
   describe "validations" do
 
-    it "must have a checkout_date" do
+    it "must have a check_out_date" do
       rental = rentals(:one)
 
       rental.check_out_date = nil
@@ -214,7 +214,7 @@ describe Rental do
       toast = "toast"
       rentals = Rental.sort_check(Rental.all, "toast")
       expect(rentals).must_be_kind_of String
-      expect(rentals).must_equal "Unable to sort with '#{toast}'. Please resubmit with a valid sort parameter (title ,name, checkout_date, or due_date)"
+      expect(rentals).must_equal "Unable to sort with '#{toast}'. Please resubmit with a valid sort parameter (title ,name, check_out_date, or due_date)"
     end
   end
 end
