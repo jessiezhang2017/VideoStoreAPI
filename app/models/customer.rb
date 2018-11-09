@@ -16,7 +16,7 @@ class Customer < ApplicationRecord
   end
 
   def find_rentals(status)
-    current_rentals = self.rentals.where("status = '#{status}'").map { |rental| { title: rental.movie.title, check_out_date: rental.check_out_date, due_date: rental.due_date } }
+    current_rentals = self.rentals.where("status = '#{status}'")
     return current_rentals
   end
 
