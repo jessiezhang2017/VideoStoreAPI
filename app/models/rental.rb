@@ -35,7 +35,7 @@ class Rental < ApplicationRecord
   end
 
   def self.sort_check(overdue_rentals, params_sort)
-    valid_fields = ["title", "name", "checkout_date", "due_date"]
+    valid_fields = ["title", "name", "check_out_date", "due_date"]
     if params_sort.nil?
       return overdue_rentals
     elsif valid_fields.include? (params_sort)

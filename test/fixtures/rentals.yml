@@ -20,3 +20,10 @@ three:
   status: "checked out"
   customer: mike
   movie: titanic
+
+four:
+  check_out_date: 2018-10-20 13:04:10
+  due_date: 2018-10-27 13:04:10
+  status: "returned"
+  customer: lily
+  movie: taken

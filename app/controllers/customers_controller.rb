@@ -19,7 +19,7 @@ class CustomersController < ApplicationController
     if @customer
       current_rentals = @customer.find_rentals('checked out')
       current_rentals = Customer.paginate_check(current_rentals, cust_params["p"], cust_params["n"])
-      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals.class != String
+      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "check_out_date", "due_date"]) if current_rentals.class != String
 
       if current_rentals.class == String #return the error
         render json: {ok: false, message: overdue_rentals }, status: :not_found
@@ -37,7 +37,7 @@ class CustomersController < ApplicationController
     if @customer
       current_rentals = @customer.find_rentals('returned')
       current_rentals = Customer.paginate_check(current_rentals, cust_params["p"], cust_params["n"])
-      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "checkout_date", "due_date"]) if current_rentals.class != String
+      current_rentals = Customer.sort_check(current_rentals, cust_params["sort"], ["title", "check_out_date", "due_date"]) if current_rentals.class != String
 
       if current_rentals.class == String #return the error
         render json: {ok: false, message: overdue_rentals }, status: :not_found
